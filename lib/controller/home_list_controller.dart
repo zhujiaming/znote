@@ -1,8 +1,4 @@
-import 'dart:io';
 
-import 'package:event_bus/event_bus.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:znote/comm/eventbus/eb.dart';
 import 'package:znote/comm/log_utils.dart';

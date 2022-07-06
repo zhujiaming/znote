@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:window_manager/window_manager.dart';
 import 'package:znote/comm/log_utils.dart';
 import 'package:znote/db/db_helper.dart';
 import 'package:znote/res/r_strings.dart';
@@ -10,6 +11,20 @@ import 'package:znote/routers.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions = const WindowOptions(
+    size: Size(400, 600),
+    center: true,
+    backgroundColor: Colors.transparent,
+    skipTaskbar: false,
+    titleBarStyle: TitleBarStyle.normal,
+  );
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
+
   await Global.init();
   runApp(const MyApp());
 }

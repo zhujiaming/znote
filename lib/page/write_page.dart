@@ -5,35 +5,25 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:get/get.dart';
 import 'package:znote/comm/log_utils.dart';
 import 'package:znote/controller/write_controller.dart';
-import 'package:znote/sample.dart';
-
-// class WritePage extends StatefulWidget {
-//   @override
-//   State<WritePage> createState() {
-//     return WritePageState();
-//   }
-// }
 
 class WritePage extends StatelessWidget {
   final WriteController _writeController = Get.put(WriteController());
-
-  TextEditingController _editController = TextEditingController();
-  FocusNode _editFocusNode = FocusNode();
   TextEditingController _mdController = TextEditingController();
-  PageController _pagerController = PageController();
+
+  WritePage({Key? key}) : super(key: key);
 
   void _onPageChanged(int pageIndex) {}
 
   void _changePage(int index) {
-    _pagerController.jumpToPage(index);
+    _writeController.pagerWidgetController.jumpToPage(index);
     // setState(() {});
   }
 
   void _onTextChanged(String value) {
     LogUtil.d("input:$value");
     // setState(() {
-      // mdData = value.replaceAll('\n','');
-      _writeController.noteContent = value;
+    // mdData = value.replaceAll('\n','');
+    _writeController.noteContent = value;
     // });
     // _writeController.save();
   }
@@ -64,7 +54,7 @@ class WritePage extends StatelessWidget {
                 SizedBox(
                     width: 30,
                     child: IconButton(
-                      icon: Icon(Icons.vertical_split),
+                      icon: Icon(Icons.preview),
                       onPressed: () {
                         _changePage(1);
                       },
@@ -72,7 +62,7 @@ class WritePage extends StatelessWidget {
                 SizedBox(
                     width: 30,
                     child: IconButton(
-                      icon: Icon(Icons.preview),
+                      icon: Icon(Icons.vertical_split),
                       onPressed: () {
                         _changePage(2);
                       },
@@ -98,14 +88,14 @@ class WritePage extends StatelessWidget {
       child: PageView(
         scrollDirection: Axis.horizontal,
         reverse: false,
-        controller: _pagerController,
+        controller: _writeController.pagerWidgetController,
         onPageChanged: _onPageChanged,
         //每次滑动是否强制切换整个页面，如果为false，则会根据实际的滑动距离显示页面
         pageSnapping: true,
         children: [
           _buildEditWidget(),
-          _buildSplitWidget(),
           _buildPreviewWidget(),
+          _buildSplitWidget(),
         ],
       ),
     );
@@ -119,11 +109,14 @@ class WritePage extends StatelessWidget {
         children: [
           Expanded(
             child: TextField(
-              maxLines: null,
-              controller: _editController,
-              keyboardType: TextInputType.multiline,
-              onChanged: _onTextChanged,
-            ),
+                maxLines: null,
+                focusNode: _writeController.editFocusNode,
+                controller: _writeController.editWidgetController,
+                keyboardType: TextInputType.multiline,
+                onChanged: _onTextChanged,
+                decoration: const InputDecoration.collapsed(
+                    hintText: "开始书写...",
+                )),
           )
         ],
       ),

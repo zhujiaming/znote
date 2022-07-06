@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:znote/comm/date_util.dart';
 import 'package:znote/comm/eventbus/eb.dart';
@@ -7,24 +8,37 @@ import 'package:znote/db/db_helper.dart';
 import 'package:znote/db/note_item.dart';
 
 class WriteController extends GetxController {
-  late NoteItem _noteItem;
+  FocusNode editFocusNode = FocusNode();
+  TextEditingController editWidgetController = TextEditingController();
+  PageController pagerWidgetController = PageController();
+
+  NoteItem? _noteItem;
 
   set noteContent(String newContent) {
-    _noteItem.text = newContent;
-    update();
-    save();
+    if (_noteItem != null) {
+      _noteItem!.text = newContent;
+      update();
+      save();
+    }
   }
 
   String get noteContent {
-    LogUtil.d("visit note contenttext");
-    return _noteItem.text;
+    if (_noteItem == null) return "";
+    return _noteItem!.text;
   }
 
-  NoteItem get noteItem => _noteItem;
+  // NoteItem get noteItem => _noteItem;
 
   @override
   void onInit() async {
     LogUtil.d("onInit run");
+    super.onInit();
+  }
+
+  @override
+  void onReady() async {
+    super.onReady();
+    LogUtil.d("onReady run");
     if (Get.arguments == null) {
       initCreate();
     } else {
@@ -35,15 +49,9 @@ class WriteController extends GetxController {
         initCreate();
       } else {
         _noteItem = note;
-        LogUtil.d("noteitem is null ${_noteItem == null}");
+        initBrowse();
       }
     }
-    super.onInit();
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
   }
 
   @override
@@ -57,18 +65,27 @@ class WriteController extends GetxController {
     int currentTime = DateUtil.getNowDateMs();
     _noteItem = NoteItem('$currentTime',
         createTime: currentTime, updateTime: currentTime);
+    editFocusNode.requestFocus();
   }
 
   void save() {
-    String content = _noteItem.text;
-    int n = content.indexOf('\n');
-    if (n <= 0) {
-      _noteItem.title = _noteItem.text;
-    } else {
-      _noteItem.title = content.substring(
-        0,
-      );
+    if (_noteItem != null) {
+      String content = _noteItem!.text;
+      int n = content.indexOf('\n');
+      if (n <= 0) {
+        _noteItem!.title = _noteItem!.text;
+      } else {
+        _noteItem!.title = content.substring(
+          0,
+        );
+      }
+      DbHelper().noteDao.saveItem(_noteItem!);
     }
-    DbHelper().noteDao.saveItem(_noteItem);
+  }
+
+  void initBrowse() {
+    editWidgetController.text = _noteItem!.text;
+    pagerWidgetController.jumpToPage(1);
+    update();
   }
 }

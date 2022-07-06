@@ -26,6 +26,10 @@ class _HomePageState extends State<HomePage> {
         arguments: {'id': _homeListController.noteDatas[index].id});
   }
 
+  void _onItemLongPress(BuildContext context, int index) {
+
+  }
+
   Future<void> _onPullRefresh() async {
     await _homeListController.loadData();
   }
@@ -33,12 +37,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Home"),
-        actions: [
-          IconButton(onPressed: () => {}, icon: const Icon(Icons.refresh))
-        ],
-      ),
+      appBar: _buildAppbar(context),
       body: Column(
         children: [
           Expanded(
@@ -72,6 +71,7 @@ class _HomePageState extends State<HomePage> {
 
     return MaterialButton(
       onPressed: () => _onItemClick(context, index),
+      onLongPress: () => _onItemLongPress(context, index),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 22),
         width: double.infinity,
@@ -81,6 +81,14 @@ class _HomePageState extends State<HomePage> {
           children: [Text(title)],
         ),
       ),
+    );
+  }
+
+  _buildAppbar(BuildContext context) {
+    return null;
+    return AppBar(
+      title: const Text("Home"),
+      actions: [IconButton(onPressed: () => {}, icon: const Icon(Icons.more))],
     );
   }
 }

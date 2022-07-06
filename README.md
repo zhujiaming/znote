@@ -21,9 +21,14 @@ flutter run -d windows
 ```
 
 ```
-> flutter build windowsc
+> flutter build windows
 ```
 
 ```
 myapp/build/windows/runner/Release/
+```
+
+创建windows的`msix`安装包
+```
+> flutter pub run msix:create
 ```
