@@ -89,10 +89,6 @@ class _HomePageState extends State<HomePage> {
     NoteItem noteData = _homeListController.noteDatas[index];
     String title = noteData.title;
 
-    if (title.length > 100) {
-      title = title.substring(0, 100);
-    }
-
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
         child: Card(

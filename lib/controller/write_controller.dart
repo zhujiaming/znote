@@ -81,12 +81,16 @@ class WriteController extends RepoGetXController {
       if (n <= 0) {
         _noteItem!.title = _noteItem!.text;
       } else {
-        _noteItem!.title = content
+        String title = content
             .substring(0, n)
             .replaceAll("#", '')
             .replaceAll('>', '')
             .replaceAll('`', '')
             .trim();
+        if (title.length > 100) {
+          title = title.substring(0, 100);
+        }
+        _noteItem!.title = title;
       }
       LogUtil.d("\\n position:$n  title:${_noteItem!.title}");
       ((await getRepo(NoteRepo) as NoteRepo))
