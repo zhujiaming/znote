@@ -26,9 +26,12 @@ abstract class NoteDao {
   @delete
   Future<void> deleteItem(NoteItem noteItem);
 
+  @Query('DELETE FROM ${DbConfig.TABLE_NAME_NOTE} WHERE id IN (:noteIds)')
+  Future<void> deleteItems(List<String> noteIds);
+
   @Query('SELECT * FROM ${DbConfig.TABLE_NAME_NOTE} WHERE id = :id')
   Future<NoteItem?> findNoteItemById(String id);
 
-  @Query('SELECT * FROM ${DbConfig.TABLE_NAME_NOTE}')
+  @Query('SELECT * FROM ${DbConfig.TABLE_NAME_NOTE}  ORDER BY updateTime DESC')
   Future<List<NoteItem>> findNoteItems();
 }

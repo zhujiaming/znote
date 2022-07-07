@@ -1,13 +1,15 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:znote/comm/date_util.dart';
+import 'package:znote/comm/flustars/date_util.dart';
 import 'package:znote/comm/eventbus/eb.dart';
 import 'package:znote/comm/eventbus/event_note_changed.dart';
 import 'package:znote/comm/log_utils.dart';
+import 'package:znote/controller/repo_binder.dart';
 import 'package:znote/db/db_helper.dart';
 import 'package:znote/db/note_item.dart';
+import 'package:znote/repo/note_repo.dart';
 
-class WriteController extends GetxController {
+class WriteController extends RepoGetXController {
   FocusNode editFocusNode = FocusNode();
   TextEditingController editWidgetController = TextEditingController();
   PageController pagerWidgetController = PageController();
@@ -33,6 +35,7 @@ class WriteController extends GetxController {
   void onInit() async {
     LogUtil.d("onInit run");
     super.onInit();
+    bindRepo(NoteRepo());
   }
 
   @override
@@ -44,7 +47,9 @@ class WriteController extends GetxController {
     } else {
       String id = Get.arguments['id'];
       LogUtil.d("write note item id is:$id");
-      var note = await DbHelper().noteDao.findNoteItemById(id);
+      var note = await (await getRepo(NoteRepo) as NoteRepo)
+          .noteDao
+          .findNoteItemById(id);
       if (note == null) {
         initCreate();
       } else {
@@ -68,18 +73,24 @@ class WriteController extends GetxController {
     editFocusNode.requestFocus();
   }
 
-  void save() {
+  void save() async {
     if (_noteItem != null) {
       String content = _noteItem!.text;
       int n = content.indexOf('\n');
+
       if (n <= 0) {
         _noteItem!.title = _noteItem!.text;
       } else {
-        _noteItem!.title = content.substring(
-          0,
-        );
+        _noteItem!.title = content
+            .substring(0, n)
+            .replaceAll("#", '')
+            .replaceAll('>', '')
+            .replaceAll('`', '')
+            .trim();
       }
-      DbHelper().noteDao.saveItem(_noteItem!);
+      LogUtil.d("\\n position:$n  title:${_noteItem!.title}");
+      ((await getRepo(NoteRepo) as NoteRepo))
+          .saveItem(_noteItem!, notify: true);
     }
   }
 

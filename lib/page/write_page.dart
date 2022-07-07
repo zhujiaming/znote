@@ -5,6 +5,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:get/get.dart';
 import 'package:znote/comm/log_utils.dart';
 import 'package:znote/controller/write_controller.dart';
+import 'package:znote/res/r_dimens.dart';
 
 class WritePage extends StatelessWidget {
   final WriteController _writeController = Get.put(WriteController());
@@ -37,6 +38,7 @@ class WritePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: ResDim.appBarHeight,
         title: Container(
           child: Center(
             child: Row(

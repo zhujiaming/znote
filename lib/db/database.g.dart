@@ -131,6 +131,17 @@ class _$NoteDao extends NoteDao {
   final DeletionAdapter<NoteItem> _noteItemDeletionAdapter;
 
   @override
+  Future<void> deleteItems(List<String> noteIds) async {
+    const offset = 1;
+    final _sqliteVariablesForNoteIds =
+        Iterable<String>.generate(noteIds.length, (i) => '?${i + offset}')
+            .join(',');
+    await _queryAdapter.queryNoReturn(
+        'DELETE FROM note WHERE id IN (' + _sqliteVariablesForNoteIds + ')',
+        arguments: [...noteIds]);
+  }
+
+  @override
   Future<NoteItem?> findNoteItemById(String id) async {
     return _queryAdapter.query('SELECT * FROM note WHERE id = ?1',
         mapper: (Map<String, Object?> row) => NoteItem(row['id'] as String,
@@ -143,7 +154,8 @@ class _$NoteDao extends NoteDao {
 
   @override
   Future<List<NoteItem>> findNoteItems() async {
-    return _queryAdapter.queryList('SELECT * FROM note',
+    return _queryAdapter.queryList(
+        'SELECT * FROM note  ORDER BY updateTime DESC',
         mapper: (Map<String, Object?> row) => NoteItem(row['id'] as String,
             createTime: row['createTime'] as int,
             updateTime: row['updateTime'] as int,
