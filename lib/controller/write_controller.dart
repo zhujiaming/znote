@@ -92,7 +92,6 @@ class WriteController extends RepoGetXController {
         }
         _noteItem!.title = title;
       }
-      LogUtil.d("\\n position:$n  title:${_noteItem!.title}");
       ((await getRepo(NoteRepo) as NoteRepo))
           .saveItem(_noteItem!, notify: true);
     }

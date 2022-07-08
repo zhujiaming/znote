@@ -1,24 +1,30 @@
 import 'package:floor/floor.dart';
+import 'package:znote/db/consts.dart';
 import 'package:znote/db/database.dart';
 
 @Entity(tableName: DbConfig.TABLE_NAME_NOTE)
 class NoteItem {
   @PrimaryKey()
   String id;
-  int createTime = 0; 
-  int updateTime = 0;
-  String text = "";
-  String title = "";
+  String pid;
+  int createTime;
+  int updateTime;
+  String text;
+  String title;
+  bool isTop;
+  int state;
 
   NoteItem(this.id,
-      {this.createTime = 0,
+      {this.pid = Consts.pidHome,
+      this.createTime = 0,
       this.updateTime = 0,
       this.text = "",
-      this.title = ''});
+      this.title = '',
+      this.isTop = false,
+      this.state = Consts.noteStateAdd});
 
-  NoteItem.from(
-    String id, {
-    int createTime = 0,
-  }) : this(id, createTime: createTime);
+// NoteItem.from(
+//   String id, {
+//   int createTime = 0,
+// }) : this(id, createTime: createTime);
 }
-

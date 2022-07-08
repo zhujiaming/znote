@@ -1,9 +1,7 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:znote/comm/log_utils.dart';
 import 'package:znote/comm/time_formatter.dart';
 import 'package:znote/controller/home_list_controller.dart';
 import 'package:znote/db/note_item.dart';
@@ -75,6 +73,7 @@ class _HomePageState extends State<HomePage> {
               child: RefreshIndicator(
             onRefresh: _onPullRefresh,
             child: ListView.builder(
+              padding: const EdgeInsets.only(top: 10, bottom: 80),
               itemBuilder: _buildItem,
               itemCount: _homeListController.noteDatas.length,
             ),
@@ -128,6 +127,14 @@ class _HomePageState extends State<HomePage> {
                       child: Icon(_homeListController.isSelect(noteData.id)
                           ? Icons.check_box_outlined
                           : Icons.check_box_outline_blank),
+                    ),
+                  if (noteData.isTop)
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: Text(
+                        '📌',
+                        style: TextStyle(fontSize: 16),
+                      ),
                     )
                 ],
               ),
@@ -158,12 +165,13 @@ class _HomePageState extends State<HomePage> {
     } else {
       // 普通模式
       return MaterialButton(
+        height: ResDim.appBarHeight,
         onPressed: _onAppBarCategoryPressed,
         child: Row(
           mainAxisSize: MainAxisSize.min,
-          children: [
+          children: const [
             Text(
-              "笔记本1",
+              "123",
               style: appBarTextStyle,
             ),
             Icon(
@@ -200,16 +208,19 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           MaterialButton(
-            onPressed: () {},
+            onPressed: () {
+              _homeListController.toggleTop();
+              _homeListController.toggleOptMode();
+            },
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.vertical_align_top),
-                SizedBox(
+                const Icon(Icons.vertical_align_top),
+                const SizedBox(
                   height: 2,
                 ),
                 Text(
-                  '置顶',
+                  _homeListController.currentTopIntent ? '置顶' : '取消置顶',
                   style: TextStyle(fontSize: 12),
                 )
               ],
@@ -253,36 +264,36 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onAppBarCategoryPressed() {
+    Function ItemWeiget = (IconData iconData, String lable) {
+      return SizedBox(
+        width: double.infinity,
+        height: 45,
+        child: Row(
+          children: [
+            Icon(iconData),
+            SizedBox(
+              width: 5,
+            ),
+            Text(lable)
+          ],
+        ),
+      );
+    };
+
     showDialog(
         context: context,
         builder: (context) {
           return SimpleDialog(
             children: [
               SimpleDialogOption(
-                child: Row(
-                  children: [
-                    Icon(Icons.delete_outline),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Text("废纸篓")
-                  ],
-                ),
+                child: ItemWeiget(Icons.delete_outline, "废纸篓"),
                 onPressed: () {
                   Get.back();
                   showToast("前往废纸篓");
                 },
               ),
               SimpleDialogOption(
-                child: Row(
-                  children: [
-                    Icon(Icons.create_new_folder_outlined),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Text("新建文件夹")
-                  ],
-                ),
+                child: ItemWeiget(Icons.create_new_folder_outlined, "新建文件夹"),
                 onPressed: () {
                   Get.back();
                   showToast("新建文件夹");

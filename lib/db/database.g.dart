@@ -81,7 +81,7 @@ class _$DataBase extends DataBase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `note` (`id` TEXT NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL, `text` TEXT NOT NULL, `title` TEXT NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `note` (`id` TEXT NOT NULL, `pid` TEXT NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL, `text` TEXT NOT NULL, `title` TEXT NOT NULL, `isTop` INTEGER NOT NULL, `state` INTEGER NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -103,10 +103,13 @@ class _$NoteDao extends NoteDao {
             'note',
             (NoteItem item) => <String, Object?>{
                   'id': item.id,
+                  'pid': item.pid,
                   'createTime': item.createTime,
                   'updateTime': item.updateTime,
                   'text': item.text,
-                  'title': item.title
+                  'title': item.title,
+                  'isTop': item.isTop ? 1 : 0,
+                  'state': item.state
                 }),
         _noteItemDeletionAdapter = DeletionAdapter(
             database,
@@ -114,10 +117,13 @@ class _$NoteDao extends NoteDao {
             ['id'],
             (NoteItem item) => <String, Object?>{
                   'id': item.id,
+                  'pid': item.pid,
                   'createTime': item.createTime,
                   'updateTime': item.updateTime,
                   'text': item.text,
-                  'title': item.title
+                  'title': item.title,
+                  'isTop': item.isTop ? 1 : 0,
+                  'state': item.state
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -145,22 +151,62 @@ class _$NoteDao extends NoteDao {
   Future<NoteItem?> findNoteItemById(String id) async {
     return _queryAdapter.query('SELECT * FROM note WHERE id = ?1',
         mapper: (Map<String, Object?> row) => NoteItem(row['id'] as String,
+            pid: row['pid'] as String,
             createTime: row['createTime'] as int,
             updateTime: row['updateTime'] as int,
             text: row['text'] as String,
-            title: row['title'] as String),
+            title: row['title'] as String,
+            isTop: (row['isTop'] as int) != 0,
+            state: row['state'] as int),
         arguments: [id]);
   }
 
   @override
-  Future<List<NoteItem>> findNoteItems() async {
+  Future<List<NoteItem>> findNoteItems(String pid, List<int> states) async {
+    const offset = 2;
+    final _sqliteVariablesForStates =
+        Iterable<String>.generate(states.length, (i) => '?${i + offset}')
+            .join(',');
     return _queryAdapter.queryList(
-        'SELECT * FROM note  ORDER BY updateTime DESC',
+        'SELECT * FROM note WHERE pid = ?1 AND state IN (' +
+            _sqliteVariablesForStates +
+            ') ORDER BY isTop DESC, updateTime DESC',
         mapper: (Map<String, Object?> row) => NoteItem(row['id'] as String,
+            pid: row['pid'] as String,
             createTime: row['createTime'] as int,
             updateTime: row['updateTime'] as int,
             text: row['text'] as String,
-            title: row['title'] as String));
+            title: row['title'] as String,
+            isTop: (row['isTop'] as int) != 0,
+            state: row['state'] as int),
+        arguments: [pid, ...states]);
+  }
+
+  @override
+  Future<List<NoteItem>> findDelNoteItems() async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM note WHERE state = 3 ORDER BY updateTime DESC',
+        mapper: (Map<String, Object?> row) => NoteItem(row['id'] as String,
+            pid: row['pid'] as String,
+            createTime: row['createTime'] as int,
+            updateTime: row['updateTime'] as int,
+            text: row['text'] as String,
+            title: row['title'] as String,
+            isTop: (row['isTop'] as int) != 0,
+            state: row['state'] as int));
+  }
+
+  @override
+  Future<void> setTop(List<String> noteIds, int isTop) async {
+    const offset = 2;
+    final _sqliteVariablesForNoteIds =
+        Iterable<String>.generate(noteIds.length, (i) => '?${i + offset}')
+            .join(',');
+    await _queryAdapter.queryNoReturn(
+        'UPDATE note SET isTop = ?1 WHERE id IN (' +
+            _sqliteVariablesForNoteIds +
+            ')',
+        arguments: [isTop, ...noteIds]);
   }
 
   @override
