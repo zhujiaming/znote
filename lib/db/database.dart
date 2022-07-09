@@ -27,8 +27,12 @@ abstract class NoteDao {
   @delete
   Future<void> deleteItem(NoteItem noteItem);
 
-  @Query('DELETE FROM ${DbConfig.TABLE_NAME_NOTE} WHERE id IN (:noteIds)')
+  @Query('UPDATE ${DbConfig.TABLE_NAME_NOTE} SET state = ${Consts.noteStateDel} WHERE id IN (:noteIds)')
   Future<void> deleteItems(List<String> noteIds);
+
+  @Query('DELETE FROM ${DbConfig.TABLE_NAME_NOTE} WHERE id IN (:noteIds)')
+  Future<void> deleteItemsReal(List<String> noteIds);
+
 
   @Query('SELECT * FROM ${DbConfig.TABLE_NAME_NOTE} WHERE id = :id')
   Future<NoteItem?> findNoteItemById(String id);

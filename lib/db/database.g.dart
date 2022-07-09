@@ -143,6 +143,19 @@ class _$NoteDao extends NoteDao {
         Iterable<String>.generate(noteIds.length, (i) => '?${i + offset}')
             .join(',');
     await _queryAdapter.queryNoReturn(
+        'UPDATE note SET state = 3 WHERE id IN (' +
+            _sqliteVariablesForNoteIds +
+            ')',
+        arguments: [...noteIds]);
+  }
+
+  @override
+  Future<void> deleteItemsReal(List<String> noteIds) async {
+    const offset = 1;
+    final _sqliteVariablesForNoteIds =
+        Iterable<String>.generate(noteIds.length, (i) => '?${i + offset}')
+            .join(',');
+    await _queryAdapter.queryNoReturn(
         'DELETE FROM note WHERE id IN (' + _sqliteVariablesForNoteIds + ')',
         arguments: [...noteIds]);
   }

@@ -5,4 +5,5 @@ class Consts {
   static const int noteStateDel = 3;
 
   static const String pidHome = '0';
+  static const String pidRecycle = '-1';
 }

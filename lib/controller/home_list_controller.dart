@@ -14,6 +14,11 @@ class HomeListController extends RepoGetXController {
 
   bool isOptMode = false;
   bool currentTopIntent = false;
+  List<String> currentPidStack = [Consts.pidHome];
+
+  String get currentPid => currentPidStack[currentPidStack.length - 1];
+
+  bool get isRecyclerListMode => currentPid == Consts.pidRecycle;
 
   @override
   void onInit() {
@@ -28,10 +33,30 @@ class HomeListController extends RepoGetXController {
     listenNoteChanged();
   }
 
+  toRecyclerMode() {
+    currentPidStack.add(Consts.pidRecycle);
+    loadData(showState: false);
+    update();
+  }
+
+  exitRecyclerMode() {
+    if (currentPidStack[currentPidStack.length - 1] == Consts.pidRecycle) {
+      currentPidStack.removeLast();
+    }
+    loadData(showState: false);
+    update();
+  }
+
   loadData({bool showState = true}) async {
     if (Global.isPC && showState) showLoading();
     NoteRepo noteRepo = getRepo(NoteRepo);
-    noteDatas = await noteRepo.findNoteItemsForShow(Consts.pidHome);
+
+    if (currentPid == Consts.pidRecycle) {
+      noteDatas = await noteRepo.findDelNoteItems();
+    } else {
+      noteDatas = await noteRepo.findNoteItemsForShow(currentPid);
+    }
+
     update();
     if (Global.isPC && showState) dismissLoading();
   }

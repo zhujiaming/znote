@@ -39,4 +39,5 @@ class NoteRepo extends BaseRepo {
   Future<List<NoteItem>> findDelNoteItems() async {
     return await noteDao.findDelNoteItems();
   }
+
 }

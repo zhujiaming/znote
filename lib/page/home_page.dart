@@ -8,6 +8,7 @@ import 'package:znote/db/note_item.dart';
 import 'package:znote/main.dart';
 import 'package:znote/res/r_colors.dart';
 import 'package:znote/res/r_dimens.dart';
+import 'package:znote/res/r_strings.dart';
 import 'package:znote/routers.dart';
 
 class HomePage extends StatefulWidget {
@@ -52,7 +53,7 @@ class _HomePageState extends State<HomePage> {
         appBar: _buildAppbar(context),
         body: _buildBody(context),
         floatingActionButton: Visibility(
-          visible: !_homeListController.isOptMode,
+          visible: shouldShowFloatActionButton(),
           child: FloatingActionButton(
             onPressed: _onAddPress,
             tooltip: '新建',
@@ -146,18 +147,16 @@ class _HomePageState extends State<HomePage> {
   _buildTitleWidget() {
     const TextStyle appBarTextStyle =
         TextStyle(color: Colors.white, fontSize: 22);
-    if (_homeListController.isOptMode) {
+    if (!isNormalListMode()) {
       // 选择模式
       return Row(
         children: [
           IconButton(
             icon: const Icon(Icons.close_rounded),
-            onPressed: () {
-              _homeListController.toggleOptMode();
-            },
+            onPressed: _exitCurrentMode,
           ),
           Text(
-            "已选择 ${_homeListController.selectNoteIds.length} 项",
+            _getModeTitle(),
             style: appBarTextStyle,
           )
         ],
@@ -286,10 +285,10 @@ class _HomePageState extends State<HomePage> {
           return SimpleDialog(
             children: [
               SimpleDialogOption(
-                child: ItemWeiget(Icons.delete_outline, "废纸篓"),
+                child: ItemWeiget(Icons.delete_outline, ResStr.recycler),
                 onPressed: () {
                   Get.back();
-                  showToast("前往废纸篓");
+                  _homeListController.toRecyclerMode();
                 },
               ),
               SimpleDialogOption(
@@ -302,5 +301,31 @@ class _HomePageState extends State<HomePage> {
             ],
           );
         });
+  }
+
+  bool shouldShowFloatActionButton() {
+    return !_homeListController.isOptMode &&
+        !_homeListController.isRecyclerListMode;
+  }
+
+  bool isNormalListMode() {
+    return !_homeListController.isOptMode &&
+        !_homeListController.isRecyclerListMode;
+  }
+
+  void _exitCurrentMode() {
+    if (_homeListController.isOptMode) {
+      _homeListController.toggleOptMode();
+    } else if (_homeListController.isRecyclerListMode) {
+      _homeListController.exitRecyclerMode();
+    }
+  }
+
+  String _getModeTitle() {
+    return _homeListController.isRecyclerListMode
+        ? ResStr.recycler
+        : _homeListController.isOptMode
+            ? "已选择 ${_homeListController.selectNoteIds.length} 项"
+            : "";
   }
 }
