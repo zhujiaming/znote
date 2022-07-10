@@ -29,7 +29,10 @@ class _HomePageState extends State<HomePage> {
 
   void _onItemClick(BuildContext context, int index) {
     NoteItem noteItem = _homeListController.noteDatas[index];
-    if (_homeListController.isOptMode) {
+    if (_homeListController.isRecyclerListMode &&
+        !_homeListController.isOptMode) {
+      _onItemLongPress(context, index);
+    } else if (_homeListController.isOptMode) {
       _homeListController.toggleSelect(noteItem.id);
     } else {
       Get.toNamed(AppRouter.write, arguments: {'id': noteItem.id});
@@ -170,7 +173,7 @@ class _HomePageState extends State<HomePage> {
           mainAxisSize: MainAxisSize.min,
           children: const [
             Text(
-              "123",
+              "笔记",
               style: appBarTextStyle,
             ),
             Icon(
@@ -205,61 +208,109 @@ class _HomePageState extends State<HomePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          MaterialButton(
-            onPressed: () {
-              _homeListController.toggleTop();
-              _homeListController.toggleOptMode();
-            },
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.vertical_align_top),
-                const SizedBox(
-                  height: 2,
-                ),
-                Text(
-                  _homeListController.currentTopIntent ? '置顶' : '取消置顶',
-                  style: TextStyle(fontSize: 12),
-                )
-              ],
-            ),
-          ),
-          SizedBox(
-            width: 5,
-          ),
-          MaterialButton(
-            onPressed: _onDeletePressed,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.delete),
-                SizedBox(
-                  height: 2,
-                ),
-                Text('删除', style: TextStyle(fontSize: 12))
-              ],
-            ),
-          )
-        ],
+        children: _getOptMenuItems(),
       ),
     );
   }
 
+  List<Widget> _getOptMenuItems() {
+    if (_homeListController.isRecyclerListMode) {
+      return [
+        MaterialButton(
+          onPressed: () {
+            showToast("已恢复${_homeListController.selectNoteIds.length}项内容");
+            _homeListController.revertNoteItems();
+            // _homeListController.toggleOptMode();
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.takeout_dining),
+              const SizedBox(
+                height: 2,
+              ),
+              Text(
+                '恢复',
+                style: TextStyle(fontSize: 12),
+              )
+            ],
+          ),
+        ),
+        SizedBox(
+          width: 5,
+        ),
+        MaterialButton(
+          onPressed: _onDeleteRealPressed,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.delete_forever_rounded),
+              SizedBox(
+                height: 2,
+              ),
+              Text('彻底删除', style: TextStyle(fontSize: 12))
+            ],
+          ),
+        )
+      ];
+    } else
+      return [
+        MaterialButton(
+          onPressed: () {
+            _homeListController.toggleTop();
+            _homeListController.toggleOptMode();
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.vertical_align_top),
+              const SizedBox(
+                height: 2,
+              ),
+              Text(
+                _homeListController.currentTopIntent ? '置顶' : '取消置顶',
+                style: TextStyle(fontSize: 12),
+              )
+            ],
+          ),
+        ),
+        SizedBox(
+          width: 5,
+        ),
+        MaterialButton(
+          onPressed: _onDeletePressed,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.delete),
+              SizedBox(
+                height: 2,
+              ),
+              Text('删除', style: TextStyle(fontSize: 12))
+            ],
+          ),
+        )
+      ];
+  }
+
   void _onDeletePressed() {
+    _homeListController.deleteNoteItems().whenComplete(() {
+      _homeListController.toggleOptMode();
+    });
+  }
+
+  void _onDeleteRealPressed() {
     showOkCancelAlertDialog(
             context: context,
             title: "提示",
-            message: "将删除${_homeListController.selectNoteIds.length}项内容",
+            message: "将彻底删除${_homeListController.selectNoteIds.length}项内容",
             okLabel: '好的',
             cancelLabel: '再想想')
         .then((okOrCancelResult) {
       if (okOrCancelResult == OkCancelResult.ok) {
-        _homeListController.deleteNoteItems();
+        _homeListController.deleteNoteItemsReal();
       }
-    }).whenComplete(() {
-      _homeListController.toggleOptMode();
-    });
+    }).whenComplete(() {});
   }
 
   void _onAppBarCategoryPressed() {
@@ -288,6 +339,7 @@ class _HomePageState extends State<HomePage> {
                 child: ItemWeiget(Icons.delete_outline, ResStr.recycler),
                 onPressed: () {
                   Get.back();
+                  _homeListController.toggleOptMode();
                   _homeListController.toRecyclerMode();
                 },
               ),
@@ -314,16 +366,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _exitCurrentMode() {
-    if (_homeListController.isOptMode) {
-      _homeListController.toggleOptMode();
-    } else if (_homeListController.isRecyclerListMode) {
+    if (_homeListController.isRecyclerListMode) {
+      if (_homeListController.isOptMode) _homeListController.toggleOptMode();
       _homeListController.exitRecyclerMode();
+    } else if (_homeListController.isOptMode) {
+      _homeListController.toggleOptMode();
     }
   }
 
   String _getModeTitle() {
+    String selectStr = "已选择 ${_homeListController.selectNoteIds.length} 项";
+
     return _homeListController.isRecyclerListMode
-        ? ResStr.recycler
+        ? '${ResStr.recycler} $selectStr'
         : _homeListController.isOptMode
             ? "已选择 ${_homeListController.selectNoteIds.length} 项"
             : "";

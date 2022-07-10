@@ -161,6 +161,19 @@ class _$NoteDao extends NoteDao {
   }
 
   @override
+  Future<void> revertNoteItems(List<String> noteIds) async {
+    const offset = 1;
+    final _sqliteVariablesForNoteIds =
+        Iterable<String>.generate(noteIds.length, (i) => '?${i + offset}')
+            .join(',');
+    await _queryAdapter.queryNoReturn(
+        'UPDATE note SET state = 0 WHERE id IN (' +
+            _sqliteVariablesForNoteIds +
+            ')',
+        arguments: [...noteIds]);
+  }
+
+  @override
   Future<NoteItem?> findNoteItemById(String id) async {
     return _queryAdapter.query('SELECT * FROM note WHERE id = ?1',
         mapper: (Map<String, Object?> row) => NoteItem(row['id'] as String,

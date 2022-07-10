@@ -15,6 +15,16 @@ class NoteRepo extends BaseRepo {
     EventBusHelper.fire(EventNoteChanged());
   }
 
+  Future<void> deleteNoteItemsReal(List<String> noteIds) async {
+    await DbHelper().noteDao.deleteItemsReal(noteIds);
+    EventBusHelper.fire(EventNoteChanged());
+  }
+
+  revertNoteItems(List<String> selectNoteIds) async{
+    await DbHelper().noteDao.revertNoteItems(selectNoteIds);
+    EventBusHelper.fire(EventNoteChanged());
+  }
+
   Future<void> saveItem(NoteItem noteItem, {bool notify = true}) async {
     await noteDao.saveItem(noteItem);
     if (notify) EventBusHelper.fire(EventNoteChanged());
@@ -39,5 +49,6 @@ class NoteRepo extends BaseRepo {
   Future<List<NoteItem>> findDelNoteItems() async {
     return await noteDao.findDelNoteItems();
   }
+
 
 }

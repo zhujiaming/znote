@@ -90,11 +90,25 @@ class HomeListController extends RepoGetXController {
     return selectNoteIds.contains(id);
   }
 
-  void deleteNoteItems() {
+  deleteNoteItems() async{
     NoteRepo repo = getRepo(NoteRepo);
-    repo.deleteNoteItems(selectNoteIds);
+    await repo.deleteNoteItems(selectNoteIds);
     selectNoteIds.clear();
-    update();
+    // update();
+  }
+
+  void deleteNoteItemsReal() async {
+    NoteRepo repo = getRepo(NoteRepo);
+    await repo.deleteNoteItemsReal(selectNoteIds);
+    selectNoteIds.clear();
+    // update();
+  }
+
+  void revertNoteItems() async {
+    NoteRepo repo = getRepo(NoteRepo);
+    await repo.revertNoteItems(selectNoteIds);
+    selectNoteIds.clear();
+    // update();
   }
 
   ///获取当前置顶意图，true 想要置顶，false 想要取消置顶
