@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:znote/comm/log_utils.dart';
 import 'package:znote/db/db_helper.dart';
+import 'package:znote/res/r_colors.dart';
 import 'package:znote/res/r_strings.dart';
 import 'package:znote/routers.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -37,6 +38,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = ThemeData();
+
     return GetMaterialApp(
         title: ResStr.APP_NAME,
         // theme: ,
@@ -47,7 +50,12 @@ class MyApp extends StatelessWidget {
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate, // This is required
-        ]);
+        ],
+        theme: ThemeData(
+            colorScheme: theme.colorScheme.copyWith(
+          primary: ResCol.primaryColor,
+          secondary: ResCol.secondaryColor,
+        )));
   }
 }
 

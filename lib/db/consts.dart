@@ -6,4 +6,7 @@ class Consts {
 
   static const String pidHome = '0';
   static const String pidRecycle = '-1';
+
+  static const int noteTypeFile = 0;
+  static const int noteTypeFolder = 1;
 }

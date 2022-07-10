@@ -59,8 +59,12 @@ class _HomePageState extends State<HomePage> {
           visible: shouldShowFloatActionButton(),
           child: FloatingActionButton(
             onPressed: _onAddPress,
+            elevation: 3,
             tooltip: '新建',
-            child: const Icon(Icons.add),
+            child: const Icon(
+              Icons.add,
+              size: 35,
+            ),
           ),
         ), // This trailing comma makes auto-formatting nicer for build methods.
       );
@@ -113,56 +117,53 @@ class _HomePageState extends State<HomePage> {
     NoteItem noteData = _homeListController.noteDatas[index];
     String title = noteData.title;
 
-    return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-        child: Card(
-          elevation: 4,
-          shadowColor: Colors.white54,
+    return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+        child: MaterialButton(
+          elevation: 0,
           color: ResCol.bgItemColor,
-          child: MaterialButton(
-            onPressed: () => _onItemClick(context, index),
-            onLongPress: () => _onItemLongPress(context, index),
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-              width: double.infinity,
-              height: 60,
-              child: Stack(
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        maxLines: 1,
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        TimeFormatter.getHomeListFormatter(noteData.updateTime),
-                        style: const TextStyle(
-                            color: Color(0xffA2A2A2), fontSize: 13),
-                      )
-                    ],
-                  ),
-                  if (_homeListController.isOptMode)
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: Icon(_homeListController.isSelect(noteData.id)
-                          ? Icons.check_box_outlined
-                          : Icons.check_box_outline_blank),
+          onPressed: () => _onItemClick(context, index),
+          onLongPress: () => _onItemLongPress(context, index),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            width: double.infinity,
+            height: 60,
+            child: Stack(
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      maxLines: 1,
                     ),
-                  if (noteData.isTop)
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: Text(
-                        '📌',
-                        style: TextStyle(fontSize: 16),
-                      ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      TimeFormatter.getHomeListFormatter(noteData.updateTime),
+                      style: const TextStyle(
+                          color: Color(0xffA2A2A2), fontSize: 13),
                     )
-                ],
-              ),
+                  ],
+                ),
+                if (_homeListController.isOptMode)
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: Icon(_homeListController.isSelect(noteData.id)
+                        ? Icons.check_box_outlined
+                        : Icons.check_box_outline_blank),
+                  ),
+                if (noteData.isTop)
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Text(
+                      '📌',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  )
+              ],
             ),
           ),
         ));
@@ -216,7 +217,9 @@ class _HomePageState extends State<HomePage> {
         IconButton(
             tooltip: "设置",
             onPressed: () => {},
-            icon: const Icon(Icons.settings))
+            icon: const Icon(
+              Icons.settings,
+            ))
       ],
     );
   }

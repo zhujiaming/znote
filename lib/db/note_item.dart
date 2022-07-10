@@ -13,6 +13,8 @@ class NoteItem {
   String title;
   bool isTop;
   int state;
+  int type;
+  String extra;
 
   NoteItem(this.id,
       {this.pid = Consts.pidHome,
@@ -21,6 +23,8 @@ class NoteItem {
       this.text = "",
       this.title = '',
       this.isTop = false,
+      this.type = Consts.noteTypeFile,
+      this.extra = '',
       this.state = Consts.noteStateAdd});
 
 // NoteItem.from(
