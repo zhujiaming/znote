@@ -76,16 +76,37 @@ class _HomePageState extends State<HomePage> {
           Expanded(
               child: RefreshIndicator(
             onRefresh: _onPullRefresh,
-            child: ListView.builder(
-              padding: const EdgeInsets.only(top: 10, bottom: 80),
-              itemBuilder: _buildItem,
-              itemCount: _homeListController.noteDatas.length,
-            ),
+            child: _buildListView(context),
           )),
           if (_homeListController.isOptMode) _buildOptMenu(context)
         ],
       ),
     );
+  }
+
+  Widget _buildListView(BuildContext context) {
+    int dataCount = _homeListController.noteDatas.length;
+    if (dataCount == 0) {
+      return SizedBox(
+        width: double.infinity,
+        height: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '🍉\n没有内容',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: ResCol.fontTipColor, fontSize: 16),
+            )
+          ],
+        ),
+      );
+    } else
+      return ListView.builder(
+        padding: const EdgeInsets.only(top: 10, bottom: 80),
+        itemBuilder: _buildItem,
+        itemCount: _homeListController.noteDatas.length,
+      );
   }
 
   Widget _buildItem(BuildContext context, int index) {
@@ -375,12 +396,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   String _getModeTitle() {
-    String selectStr = "已选择 ${_homeListController.selectNoteIds.length} 项";
-
+    int selCount = _homeListController.selectNoteIds.length;
+    String selectStr = "已选择 $selCount 项";
+    if (selCount == 0) {
+      selectStr = '';
+    }
     return _homeListController.isRecyclerListMode
         ? '${ResStr.recycler} $selectStr'
         : _homeListController.isOptMode
-            ? "已选择 ${_homeListController.selectNoteIds.length} 项"
+            ? selectStr
             : "";
   }
 }
