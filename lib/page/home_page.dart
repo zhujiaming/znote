@@ -96,7 +96,7 @@ class _HomePageState extends State<HomePage> {
         height: double.infinity,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: const [
             Text(
               '🍉\n没有内容',
               textAlign: TextAlign.center,
@@ -105,12 +105,13 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       );
-    } else
+    } else {
       return ListView.builder(
         padding: const EdgeInsets.only(top: 10, bottom: 80),
         itemBuilder: _buildItem,
         itemCount: _homeListController.noteDatas.length,
       );
+    }
   }
 
   Widget _buildItem(BuildContext context, int index) {
@@ -121,6 +122,9 @@ class _HomePageState extends State<HomePage> {
         margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
         child: MaterialButton(
           elevation: 0,
+          focusElevation: 0,
+          highlightElevation: 0,
+          hoverElevation: 0,
           color: ResCol.bgItemColor,
           onPressed: () => _onItemClick(context, index),
           onLongPress: () => _onItemLongPress(context, index),
@@ -216,7 +220,7 @@ class _HomePageState extends State<HomePage> {
       actions: [
         IconButton(
             tooltip: "设置",
-            onPressed: () => {},
+            onPressed: () => {Get.toNamed(AppRouter.setting)},
             icon: const Icon(
               Icons.settings,
             ))
