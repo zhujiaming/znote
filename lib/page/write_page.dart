@@ -11,7 +11,11 @@ class WritePage extends StatelessWidget {
   final WriteController _writeController = Get.put(WriteController());
   TextEditingController _mdController = TextEditingController();
 
-  WritePage({Key? key}) : super(key: key);
+  WritePage({Key? key, String? editId}) : super(key: key) {
+    if (editId != null) {
+      _writeController.initData(id: editId);
+    }
+  }
 
   void _onPageChanged(int pageIndex) {}
 
@@ -111,13 +115,14 @@ class WritePage extends StatelessWidget {
         children: [
           Expanded(
             child: TextField(
+                scrollController: ScrollController(),
                 maxLines: null,
                 focusNode: _writeController.editFocusNode,
                 controller: _writeController.editWidgetController,
                 keyboardType: TextInputType.multiline,
                 onChanged: _onTextChanged,
                 decoration: const InputDecoration.collapsed(
-                    hintText: "开始书写...",
+                  hintText: "开始书写...",
                 )),
           )
         ],

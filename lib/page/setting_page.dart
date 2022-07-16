@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:znote/comm/file_utils.dart';
+import 'package:znote/comm/log_utils.dart';
 import 'package:znote/main.dart';
 import 'package:znote/res/r_colors.dart';
 import 'package:znote/res/r_dimens.dart';
+import 'package:process_run/shell.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({Key? key}) : super(key: key);
@@ -60,7 +62,8 @@ class _SettingPageState extends State<SettingPage> {
 
   void _openCacheFolder() {
     (FileUtils.getHomeDir()).then((res) {
-      showToast(res.path);
+      String path = res.path.replaceAll('/', '\\');
+      Shell().runExecutableArguments('explorer', ['$path\\']);
     });
   }
 }

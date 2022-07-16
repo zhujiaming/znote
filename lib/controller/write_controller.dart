@@ -42,21 +42,7 @@ class WriteController extends RepoGetXController {
   void onReady() async {
     super.onReady();
     LogUtil.d("onReady run");
-    if (Get.arguments == null) {
-      initCreate();
-    } else {
-      String id = Get.arguments['id'];
-      LogUtil.d("write note item id is:$id");
-      var note = await (await getRepo(NoteRepo) as NoteRepo)
-          .noteDao
-          .findNoteItemById(id);
-      if (note == null) {
-        initCreate();
-      } else {
-        _noteItem = note;
-        initBrowse();
-      }
-    }
+    initData();
   }
 
   @override
@@ -101,5 +87,23 @@ class WriteController extends RepoGetXController {
     editWidgetController.text = _noteItem!.text;
     pagerWidgetController.jumpToPage(1);
     update();
+  }
+
+  void initData({String? id}) async {
+    if (Get.arguments == null && id == null) {
+      initCreate();
+    } else {
+      String tmpId = id ?? Get.arguments['id'];
+      LogUtil.d("write note item id is:$tmpId");
+      var note = await (await getRepo(NoteRepo) as NoteRepo)
+          .noteDao
+          .findNoteItemById(tmpId);
+      if (note == null) {
+        initCreate();
+      } else {
+        _noteItem = note;
+        initBrowse();
+      }
+    }
   }
 }

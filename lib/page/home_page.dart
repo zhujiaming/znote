@@ -1,9 +1,9 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:znote/comm/time_formatter.dart';
 import 'package:znote/controller/home_list_controller.dart';
+import 'package:znote/controller/home_page_pc_controller.dart';
 import 'package:znote/db/note_item.dart';
 import 'package:znote/main.dart';
 import 'package:znote/res/r_colors.dart';
@@ -35,7 +35,9 @@ class _HomePageState extends State<HomePage> {
     } else if (_homeListController.isOptMode) {
       _homeListController.toggleSelect(noteItem.id);
     } else {
-      Get.toNamed(AppRouter.write, arguments: {'id': noteItem.id});
+      if (!resetPcEditorArea(noteId: noteItem.id)) {
+        Get.toNamed(AppRouter.write, arguments: {'id': noteItem.id});
+      }
     }
   }
 
@@ -47,6 +49,27 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _onPullRefresh() async {
     await _homeListController.loadData();
+  }
+
+  void _onRecyclerPressed() {
+    Get.back();
+    resetPcEditorArea();
+    _homeListController.toggleOptMode();
+    _homeListController.toRecyclerMode();
+  }
+
+  void _onCreateFolderPressed() {
+    Get.back();
+    resetPcEditorArea();
+    showToast("新建文件夹");
+  }
+
+  bool resetPcEditorArea({String? noteId}) {
+    if (Global.isPC) {
+      Get.find<HomePagePcController>().editId = noteId ?? '';
+      return true;
+    }
+    return false;
   }
 
   @override
@@ -107,6 +130,8 @@ class _HomePageState extends State<HomePage> {
       );
     } else {
       return ListView.builder(
+        key: UniqueKey(),
+        controller: ScrollController(),
         padding: const EdgeInsets.only(top: 10, bottom: 80),
         itemBuilder: _buildItem,
         itemCount: _homeListController.noteDatas.length,
@@ -365,18 +390,11 @@ class _HomePageState extends State<HomePage> {
             children: [
               SimpleDialogOption(
                 child: ItemWeiget(Icons.delete_outline, ResStr.recycler),
-                onPressed: () {
-                  Get.back();
-                  _homeListController.toggleOptMode();
-                  _homeListController.toRecyclerMode();
-                },
+                onPressed: _onRecyclerPressed,
               ),
               SimpleDialogOption(
                 child: ItemWeiget(Icons.create_new_folder_outlined, "新建文件夹"),
-                onPressed: () {
-                  Get.back();
-                  showToast("新建文件夹");
-                },
+                onPressed: _onCreateFolderPressed,
               )
             ],
           );

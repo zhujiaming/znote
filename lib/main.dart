@@ -15,9 +15,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (Global.isPC) {
     await windowManager.ensureInitialized();
-
     WindowOptions windowOptions = const WindowOptions(
-      size: Size(400, 600),
+      size: Size(1000, 600),
       center: true,
       backgroundColor: Colors.transparent,
       skipTaskbar: false,
@@ -45,7 +44,7 @@ class MyApp extends StatelessWidget {
         // theme: ,
         getPages: AppRouter.pages,
         builder: EasyLoading.init(),
-        initialRoute: AppRouter.home,
+        initialRoute: Global.isPC ? AppRouter.home_pc : AppRouter.home,
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,

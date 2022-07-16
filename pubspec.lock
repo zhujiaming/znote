@@ -609,6 +609,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "4.2.4"
+  process_run:
+    dependency: "direct main"
+    description:
+      name: process_run
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.12.3+2"
   pub_semver:
     dependency: transitive
     description:
