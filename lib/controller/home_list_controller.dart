@@ -90,7 +90,7 @@ class HomeListController extends RepoGetXController {
     return selectNoteIds.contains(id);
   }
 
-  deleteNoteItems() async{
+  deleteNoteItems() async {
     NoteRepo repo = getRepo(NoteRepo);
     await repo.deleteNoteItems(selectNoteIds);
     selectNoteIds.clear();
@@ -125,5 +125,9 @@ class HomeListController extends RepoGetXController {
     bool topIntent = getTopIntent();
     NoteRepo repo = getRepo(NoteRepo);
     await repo.setTop(selectNoteIds, isTop: topIntent, notify: true);
+  }
+
+  void exportNote() {
+    showToast("导出word");
   }
 }

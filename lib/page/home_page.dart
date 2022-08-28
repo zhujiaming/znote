@@ -185,7 +185,7 @@ class _HomePageState extends State<HomePage> {
                         : Icons.check_box_outline_blank),
                   ),
                 if (noteData.isTop)
-                  Align(
+                  const Align(
                     alignment: Alignment.topRight,
                     child: Text(
                       '📌',
@@ -268,82 +268,10 @@ class _HomePageState extends State<HomePage> {
 
   List<Widget> _getOptMenuItems() {
     if (_homeListController.isRecyclerListMode) {
-      return [
-        MaterialButton(
-          onPressed: () {
-            showToast("已恢复${_homeListController.selectNoteIds.length}项内容");
-            _homeListController.revertNoteItems();
-            // _homeListController.toggleOptMode();
-          },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.takeout_dining),
-              const SizedBox(
-                height: 2,
-              ),
-              Text(
-                '恢复',
-                style: TextStyle(fontSize: 12),
-              )
-            ],
-          ),
-        ),
-        SizedBox(
-          width: 5,
-        ),
-        MaterialButton(
-          onPressed: _onDeleteRealPressed,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.delete_forever_rounded),
-              SizedBox(
-                height: 2,
-              ),
-              Text('彻底删除', style: TextStyle(fontSize: 12))
-            ],
-          ),
-        )
-      ];
-    } else
-      return [
-        MaterialButton(
-          onPressed: () {
-            _homeListController.toggleTop();
-            _homeListController.toggleOptMode();
-          },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.vertical_align_top),
-              const SizedBox(
-                height: 2,
-              ),
-              Text(
-                _homeListController.currentTopIntent ? '置顶' : '取消置顶',
-                style: TextStyle(fontSize: 12),
-              )
-            ],
-          ),
-        ),
-        SizedBox(
-          width: 5,
-        ),
-        MaterialButton(
-          onPressed: _onDeletePressed,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.delete),
-              SizedBox(
-                height: 2,
-              ),
-              Text('删除', style: TextStyle(fontSize: 12))
-            ],
-          ),
-        )
-      ];
+      return _buildRecyclerOptMenuItems();
+    } else {
+      return _buildNoteListOptMenuItems();
+    }
   }
 
   void _onDeletePressed() {
@@ -431,5 +359,108 @@ class _HomePageState extends State<HomePage> {
         : _homeListController.isOptMode
             ? selectStr
             : "";
+  }
+
+  List<Widget> _buildRecyclerOptMenuItems() {
+    return [
+      MaterialButton(
+        onPressed: () {
+          showToast("已恢复${_homeListController.selectNoteIds.length}项内容");
+          _homeListController.revertNoteItems();
+          // _homeListController.toggleOptMode();
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Icon(Icons.takeout_dining),
+            SizedBox(
+              height: 2,
+            ),
+            Text(
+              '恢复',
+              style: TextStyle(fontSize: 12),
+            )
+          ],
+        ),
+      ),
+      const SizedBox(
+        width: 5,
+      ),
+      MaterialButton(
+        onPressed: _onDeleteRealPressed,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Icon(Icons.delete_forever_rounded),
+            SizedBox(
+              height: 2,
+            ),
+            Text('彻底删除', style: TextStyle(fontSize: 12))
+          ],
+        ),
+      )
+    ];
+  }
+
+  List<Widget> _buildNoteListOptMenuItems() {
+    return [
+      MaterialButton(
+        onPressed: () {
+          _homeListController.toggleTop();
+          _homeListController.toggleOptMode();
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.vertical_align_top),
+            const SizedBox(
+              height: 2,
+            ),
+            Text(
+              _homeListController.currentTopIntent ? '置顶' : '取消置顶',
+              style: TextStyle(fontSize: 12),
+            )
+          ],
+        ),
+      ),
+      const SizedBox(
+        width: 5,
+      ),
+      MaterialButton(
+        onPressed: () {
+          showToast("导出");
+          _homeListController.exportNote();
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.reply_rounded),
+            const SizedBox(
+              height: 2,
+            ),
+            Text(
+              '导出',
+              style: TextStyle(fontSize: 12),
+            )
+          ],
+        ),
+      ),
+      const SizedBox(
+        width: 5,
+      ),
+      MaterialButton(
+        onPressed: _onDeletePressed,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Icon(Icons.delete),
+            SizedBox(
+              height: 2,
+            ),
+            Text('删除', style: TextStyle(fontSize: 12))
+          ],
+        ),
+      )
+    ];
   }
 }
