@@ -79,6 +79,14 @@ showLoading() {
   EasyLoading.show(dismissOnTap: false, maskType: EasyLoadingMaskType.black);
 }
 
+loadingShow() {
+  showLoading();
+}
+
 dismissLoading() {
   EasyLoading.dismiss();
+}
+
+loadingDismiss() {
+  dismissLoading();
 }

@@ -47,8 +47,11 @@ dependencies:
   event_bus: ^2.0.0
   window_manager: ^0.2.5 #https://pub.dev/packages/window_manager
   adaptive_dialog: ^1.6.4+1
-  file_selector: ^0.8.4+3 #https://pub.flutter-io.cn/packages/file_selector macOs需要单独配置其他参数
+  file_selector: ^0.8.4+3 #https://pub.flutter-io.cn/packages/file_selector (macOs需要单独配置其他参数)
   process_run: ^0.12.3+2
+  logger: ^1.1.0 #https://pub.flutter-io.cn/packages/logger/example
+  dio_log: ^2.0.4 #https://pub.flutter-io.cn/packages/dio_log/example
+  shared_preferences: ^2.0.15
 
 
 dev_dependencies:

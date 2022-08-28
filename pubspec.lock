@@ -204,6 +204,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "4.0.6"
+  dio_log:
+    dependency: "direct main"
+    description:
+      name: dio_log
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.0.4"
   dynamic_color:
     dependency: transitive
     description:
@@ -455,6 +462,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.1"
+  logger:
+    dependency: "direct main"
+    description:
+      name: logger
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.1.0"
   logging:
     dependency: transitive
     description:
@@ -638,7 +652,7 @@ packages:
     source: hosted
     version: "0.1.2"
   shared_preferences:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: shared_preferences
       url: "https://pub.flutter-io.cn"

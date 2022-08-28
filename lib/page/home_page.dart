@@ -1,10 +1,12 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:dio_log/overlay_draggable_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:znote/comm/time_formatter.dart';
 import 'package:znote/controller/home_list_controller.dart';
 import 'package:znote/controller/home_page_pc_controller.dart';
 import 'package:znote/db/note_item.dart';
+import 'package:znote/git/logic.dart';
 import 'package:znote/main.dart';
 import 'package:znote/res/r_colors.dart';
 import 'package:znote/res/r_dimens.dart';
@@ -70,6 +72,14 @@ class _HomePageState extends State<HomePage> {
       return true;
     }
     return false;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    ///display overlay button 显示悬浮按钮
+    showDebugBtn(context, btnColor: Colors.blue);
   }
 
   @override
@@ -244,11 +254,20 @@ class _HomePageState extends State<HomePage> {
       title: _buildTitleWidget(),
       actions: [
         IconButton(
+            tooltip: "同步",
+            onPressed: () async {
+              var auth = await GitLogic.get().auth();
+              showToast("auth ret:$auth");
+            },
+            icon: const Icon(
+              Icons.sync,
+            )),
+        IconButton(
             tooltip: "设置",
             onPressed: () => {Get.toNamed(AppRouter.setting)},
             icon: const Icon(
               Icons.settings,
-            ))
+            )),
       ],
     );
   }
@@ -428,7 +447,6 @@ class _HomePageState extends State<HomePage> {
       ),
       MaterialButton(
         onPressed: () {
-          showToast("导出");
           _homeListController.exportNote();
         },
         child: Column(
