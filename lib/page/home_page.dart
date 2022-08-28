@@ -256,8 +256,7 @@ class _HomePageState extends State<HomePage> {
         IconButton(
             tooltip: "同步",
             onPressed: () async {
-              var auth = await GitLogic.get().auth();
-              showToast("auth ret:$auth");
+              Get.toNamed(AppRouter.git_repo);
             },
             icon: const Icon(
               Icons.sync,

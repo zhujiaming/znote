@@ -23,4 +23,9 @@ class LogConfig{
     ///Disabling Log Printing
     DioLogInterceptor.enablePrintLog = false;
   }
+
+
+  initLogger() {
+
+  }
 }

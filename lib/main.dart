@@ -10,6 +10,7 @@ import 'package:znote/res/r_colors.dart';
 import 'package:znote/res/r_strings.dart';
 import 'package:znote/routers.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:logger/logger.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -70,6 +71,7 @@ class Global {
     await DbHelper().init();
   }
 }
+
 
 showToast(String msg) {
   EasyLoading.showToast(msg);

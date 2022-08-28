@@ -1,3 +1,13 @@
+import 'package:logger/logger.dart';
+
+var logger = Logger(
+  printer: PrettyPrinter(),
+);
+
+var loggerNoStack = Logger(
+  printer: PrettyPrinter(methodCount: 0),
+);
+
 class LogUtil {
   static bool _isDebug = false;
 
@@ -6,10 +16,10 @@ class LogUtil {
   }
 
   static d(Object? printMessage) {
-    print(printMessage);
+    logger.d(printMessage);
   }
 
-  static e(Object? error) {
-    print(error);
+  static e(dynamic message, [dynamic error, StackTrace? stackTrace]) {
+    logger.e(message, error, stackTrace);
   }
 }

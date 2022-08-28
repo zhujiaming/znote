@@ -1,4 +1,4 @@
-class AuthRet {
+class AuthInfo {
   String? accessToken;
   String? tokenType;
   int? expiresIn;
@@ -6,7 +6,7 @@ class AuthRet {
   String? scope;
   int? createdAt;
 
-  AuthRet(
+  AuthInfo(
       {this.accessToken,
       this.tokenType,
       this.expiresIn,
@@ -14,7 +14,7 @@ class AuthRet {
       this.scope,
       this.createdAt});
 
-  AuthRet.fromJson(Map<String, dynamic> json) {
+  AuthInfo.fromJson(Map<String, dynamic> json) {
     accessToken = json['access_token'];
     tokenType = json['token_type'];
     expiresIn = json['expires_in'];
