@@ -12,7 +12,9 @@ class FileUtils {
       dir = await getApplicationDocumentsDirectory();
     } else if (Platform.isWindows) {
       dir = await getApplicationDocumentsDirectory();
-    } else {
+    } else if(Platform.isMacOS){
+      dir = await getApplicationDocumentsDirectory();
+    }else {
       dir = await getExternalStorageDirectory();
     }
     var homePath = '${dir!.path}/$appHomeName';
